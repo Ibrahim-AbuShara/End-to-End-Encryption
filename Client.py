@@ -193,7 +193,7 @@ class GUI:
     # function to receive messages
     def receive(self):
         while True:
-            # try:
+            try:
                 message = client.recv(1024).decode(FORMAT)
                 # if the messages from the server is NAME send the client's name
                 if message == 'INFO':
@@ -211,11 +211,11 @@ class GUI:
                     
                     self.textCons.config(state = DISABLED)
                     self.textCons.see(END)
-            # except:
-            #     # an error will be printed on the command line or console if there's an error
-            #     print("An error occured!")
-            #     client.close()
-            #     break
+            except:
+                # an error will be printed on the command line or console if there's an error
+                print("An error occured!")
+                client.close()
+                break
         
     # function to send messages
     def sendMessage(self):
@@ -231,7 +231,6 @@ class GUI:
             for i in self.msg:
                 mesg += str(i)
                 mesg += "\/"
-            print(mesg)
             client.send(mesg.encode(FORMAT))
             break
 

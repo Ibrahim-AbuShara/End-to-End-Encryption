@@ -92,7 +92,6 @@ class Rsa:
         # Convert each letter in the plaintext to numbers based on the character using a^b mod m
         cipher = [pow(ord(char), key , n) for char in plaintext]
         # Return the array of bytes
-        print(cipher)
         return cipher
     # 15afff?
     # [49, 53, 97, 102, 102, 102, 63]
@@ -109,12 +108,12 @@ class Rsa:
         return ''.join(plain)
 
 
-if __name__ == '__main__':
-    while True:
-        print("------------------")
-        x = Rsa()
-        print("Public Key :",x.public)
-        cipher = x.encrypt(input("Plain Text < "),x.public)
-        plain = x.decrypt(cipher)
-        print("Plain Text >",plain)
+# if __name__ == '__main__':
+#     while True:
+#         print("------------------")
+#         x = Rsa()
+#         print("Public Key :",x.public)
+#         cipher = x.encrypt(input("Plain Text < "),x.public)
+#         plain = x.decrypt(cipher)
+#         print("Plain Text >",plain)
         
