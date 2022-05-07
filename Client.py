@@ -10,7 +10,7 @@ from RSA import Rsa
 
 
 PORT = 5000
-SERVER = "192.168.1.13"
+SERVER = "192.168.1.8"
 ADDRESS = (SERVER, PORT)
 FORMAT = "utf-8"
 
@@ -79,7 +79,7 @@ class GUI:
         self.go.place(relx = 0.4,
                     rely = 0.55)
         self.Window.mainloop()
-        self.msg = self.x.public
+        # self.msg = self.x.public
         self.sendMessage()
 
     def goAhead(self, name):
@@ -178,29 +178,36 @@ class GUI:
         scrollbar.config(command = self.textCons.yview)
         
         self.textCons.config(state = DISABLED)
-
+        
+     
     # function to basically start the thread for sending messages
-    def sendButton(self, msg):
+    def sendButton(self,msg):
         self.textCons.config(state = DISABLED)
-        msg = self.x.encrypt(msg)
-        mesg = ""
-        for i in msg:
-            mesg += str(i)
-            mesg += "\/"
-        print(mesg)
-        self.msg = mesg
+        self.msg=msg
         self.entryMsg.delete(0, END)
         snd= threading.Thread(target = self.sendMessage)
         snd.start()
-
+    #function to the public_key received as string from server to a tuple     
+    def convert_str_tup(self):
+        char_to_replace = {'(': '',
+                          ')': ''}
+        for key, value in char_to_replace.items():
+            self.p_key = self.p_key.replace(key, value)
+        self.p_key = tuple(map(int, self.p_key.split(', ')))
+        
     # function to receive messages
     def receive(self):
         while True:
             try:
                 message = client.recv(1024).decode(FORMAT)
                 # if the messages from the server is NAME send the client's name
-                if message == 'NAME':
-                    client.send(self.name.encode(FORMAT))
+                if message == 'INFO':
+                    info=self.name+'+'+str(self.x.public)
+                    client.send(info.encode(FORMAT))
+                    self.p_key=client.recv(1024).decode(FORMAT)
+                    self.convert_str_tup()                  
+                    print(f'pkey:{self.p_key}')
+                    print(type(self.p_key))
                 else:
                     # insert messages to text box
                     self.textCons.config(state = NORMAL)
@@ -220,7 +227,17 @@ class GUI:
         self.textCons.config(state=DISABLED)
         while True:
             message = (f"{self.name}: {self.msg}") 
-            client.send(message.encode(FORMAT))
+            self.textCons.config(state = NORMAL)
+            self.textCons.insert(END,
+                                message+"\n\n")
+            
+            self.msg = self.x.encrypt(message)
+            mesg = ""
+            for i in self.msg:
+                mesg += str(i)
+                mesg += "\/"
+            print(mesg)
+            client.send(mesg.encode(FORMAT))
             break
 
 # create a GUI class object

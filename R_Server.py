@@ -11,7 +11,7 @@ with open("data.csv", "w+", newline='') as f:
     writer.writerow(header) # write the header
 # Choose a port that is free
 PORT = 5000
-
+key=[]
 # An IPv4 address is obtained
 # for the server.
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -55,23 +55,26 @@ def startChat():
 		# a new connection to the client
 		# and the address bound to it
 		conn, addr = server.accept()
-		conn.send("NAME".encode(FORMAT))
+		conn.send("INFO".encode(FORMAT))
 		
 		# 1024 represents the max amount
 		# of data that can be received (bytes)
-		name = conn.recv(1024).decode(FORMAT)
-		
+		info = conn.recv(10240).decode(FORMAT).split('+')
+		name=info[0]
+		key.append(info[1].encode(FORMAT))
 		# append the name and client
 		# to the respective list
 		names.append(name)
 		clients.append(conn)
-		
+		if len(key)==2:
+			clients[0].send(key[1])
+			clients[1].send(key[0])
 		print(f"Name is :{name}")
 		
 		# broadcast message
-		broadcastMessage(f"{name} has joined the chat!".encode(FORMAT))
+		# broadcastMessage(f"{name} has joined the chat!".encode(FORMAT))
 		
-		conn.send('Connection successful!'.encode(FORMAT))
+		# conn.send('Connection successful!'.encode(FORMAT))
 		
 		# Start the handling thread
 		thread = threading.Thread(target = handle,
@@ -95,8 +98,13 @@ def handle(conn, addr):
 		msg=message.decode(FORMAT).replace(': ',',')
 		with open('data.csv','a') as f: 
 				f.write(msg)
+				f.write('\n')
 		# broadcast message
-		broadcastMessage(message)
+		index = clients.index(conn)
+		if index:
+			clients[0].send(message)
+		else:
+			clients[1].send(message)
         
 	
 	# close the connection
@@ -104,9 +112,9 @@ def handle(conn, addr):
 
 # method for broadcasting
 # messages to the each clients
-def broadcastMessage(message):
-	for client in clients:
-         client.send(message)
+# def broadcastMessage(message):
+# 	for client in clients:
+#          client.send(message)
 
 # call the method to
 # begin the communication
