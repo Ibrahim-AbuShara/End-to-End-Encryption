@@ -1,6 +1,4 @@
 import random
-from re import T
-
 
 class Rsa:
 
@@ -87,10 +85,10 @@ class Rsa:
         return ((e, n), (d, n))
 
                 #def encrypt(self, plaintext, public_key):
-    def encrypt(self, plaintext):
+    def encrypt(self, plaintext , pub_key):
         # Unpack the key into it's components
                 #key , n = public_key
-        key , n = self.public
+        key , n = pub_key
         # Convert each letter in the plaintext to numbers based on the character using a^b mod m
         cipher = [pow(ord(char), key , n) for char in plaintext]
         # Return the array of bytes
@@ -101,8 +99,11 @@ class Rsa:
     def decrypt(self, ciphertext):
         # Unpack the key into its components
         key, n = self.private
+        ciphertext = ciphertext.split('\/')
+        ciphertext.pop()
+        ciphertext = ciphertext
         # Generate the plaintext based on the ciphertext and key using a^b mod m
-        aux = [str(pow(char, key, n)) for char in ciphertext]
+        aux = [str(pow(int(char), key, n)) for char in ciphertext]
         # Return the array of bytes as a string
         plain = [chr(int(char2)) for char2 in aux]
         return ''.join(plain)
@@ -113,6 +114,7 @@ if __name__ == '__main__':
         print("------------------")
         x = Rsa()
         print("Public Key :",x.public)
-        cipher = x.encrypt(input("Plain Text < "))
+        cipher = x.encrypt(input("Plain Text < "),x.public)
         plain = x.decrypt(cipher)
         print("Plain Text >",plain)
+        

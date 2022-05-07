@@ -2,15 +2,10 @@
 import socket
 import threading
 from tkinter import *
-from tkinter import font
-from tkinter import ttk
 from RSA import Rsa
-# import all functions /
-# everything from chat.py file
-
 
 PORT = 5000
-SERVER = "192.168.1.8"
+SERVER = "192.168.1.13"
 ADDRESS = (SERVER, PORT)
 FORMAT = "utf-8"
 
@@ -198,7 +193,7 @@ class GUI:
     # function to receive messages
     def receive(self):
         while True:
-            try:
+            # try:
                 message = client.recv(1024).decode(FORMAT)
                 # if the messages from the server is NAME send the client's name
                 if message == 'INFO':
@@ -206,21 +201,21 @@ class GUI:
                     client.send(info.encode(FORMAT))
                     self.p_key=client.recv(1024).decode(FORMAT)
                     self.convert_str_tup()                  
-                    print(f'pkey:{self.p_key}')
-                    print(type(self.p_key))
+                
                 else:
                     # insert messages to text box
                     self.textCons.config(state = NORMAL)
+                    message = self.x.decrypt(message)
                     self.textCons.insert(END,
                                         message+"\n\n")
                     
                     self.textCons.config(state = DISABLED)
                     self.textCons.see(END)
-            except:
-                # an error will be printed on the command line or console if there's an error
-                print("An error occured!")
-                client.close()
-                break
+            # except:
+            #     # an error will be printed on the command line or console if there's an error
+            #     print("An error occured!")
+            #     client.close()
+            #     break
         
     # function to send messages
     def sendMessage(self):
@@ -231,7 +226,7 @@ class GUI:
             self.textCons.insert(END,
                                 message+"\n\n")
             
-            self.msg = self.x.encrypt(message)
+            self.msg = self.x.encrypt(message,self.p_key)
             mesg = ""
             for i in self.msg:
                 mesg += str(i)
@@ -242,4 +237,3 @@ class GUI:
 
 # create a GUI class object
 g = GUI()
-

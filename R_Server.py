@@ -1,7 +1,7 @@
 # import socket library
 import socket
 import csv
-from pandas import read_csv      
+     
 # import threading library
 import threading
 header = ['name', 'message']
