@@ -3,9 +3,13 @@ import socket
 import threading
 from tkinter import *
 from RSA import Rsa
+from pathlib import Path
+
+# Explicit imports to satisfy Flake8
+from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 
 PORT = 5000
-SERVER = "192.168.1.13"
+SERVER = "192.168.1.8"
 ADDRESS = (SERVER, PORT)
 FORMAT = "utf-8"
 
@@ -14,6 +18,14 @@ FORMAT = "utf-8"
 client = socket.socket(socket.AF_INET,
                     socket.SOCK_STREAM)
 client.connect(ADDRESS)
+
+
+OUTPUT_PATH = Path(__file__).parent
+ASSETS_PATH = OUTPUT_PATH / Path("./assets")
+
+
+def relative_to_assets(path: str) -> Path:
+    return ASSETS_PATH / Path(path)
 
 
 # GUI class for the chat
@@ -29,50 +41,83 @@ class GUI:
         self.login = Toplevel()
         # set the title
         self.login.title("Login")
-        self.login.resizable(width = False,
-                            height = False)
-        self.login.configure(width = 400,
-                            height = 300)
+
+        self.login.geometry("441x437")
+        self.login.configure(bg = "#FFFFFF")
+
+        self.canvas = Canvas(
+            self.login,
+            bg = "#FFFFFF",
+            height = 437,
+            width = 441,
+            bd = 0,
+            highlightthickness = 0,
+            relief = "ridge"
+        )
+
+        self.canvas.place(x = 0, y = 0)
+        self.image_image_1 = PhotoImage(
+            file=relative_to_assets("image_1.png"))
+        self.image_1 = self.canvas.create_image(
+            216.0,
+            143.0,
+            image=self.image_image_1
+        )
         # create a Label
-        self.pls = Label(self.login,
-                    text = "Please login to continue",
-                    justify = CENTER,
-                    font = "Helvetica 14 bold")
-        
-        self.pls.place(relheight = 0.15,
-                    relx = 0.2,
-                    rely = 0.07)
-        # create a Label
-        self.labelName = Label(self.login,
-                            text = "Name: ",
-                            font = "Helvetica 12")
-        
-        self.labelName.place(relheight = 0.2,
-                            relx = 0.1,
-                            rely = 0.2)
+        self.pls = self.canvas.create_text(
+            82.0,
+            326.0,
+            anchor="nw",
+            text="Name",
+            fill="#000000",
+            font=("Inter", 16 * -1)
+        )
         
         # create a entry box for
         # tyoing the message
-        self.entryName = Entry(self.login,
-                            font = "Helvetica 14")
+        self.entry_image_1 = PhotoImage(
+            file=relative_to_assets("entry_1.png"))
+        self.entry_bg_1 = self.canvas.create_image(
+            220.5,
+            336.0,
+            image=self.entry_image_1
+        )
+
+        self.entryName = Entry(
+            self.login,
+            bd=0,
+            bg="#FFFFFF",
+            highlightthickness=0
+        )
         
-        self.entryName.place(relwidth = 0.4,
-                            relheight = 0.12,
-                            relx = 0.35,
-                            rely = 0.2)
-        
-        # set the focus of the cursor
-        self.entryName.focus()
+        self.entryName.place(
+            x=131.0,
+            y=320.0,
+            width=179.0,
+            height=30.0
+        )
         
         # create a Continue Button
         # along with action
-        self.go = Button(self.login,
-                        text = "CONTINUE",
-                        font = "Helvetica 14 bold",
-                        command = lambda: self.goAhead(self.entryName.get()))
+        button_image_1 = PhotoImage(
+        file=relative_to_assets("button_1.png"))
+        self.go = Button(
+            self.login,
+            image=button_image_1,
+            borderwidth=0,
+            highlightthickness=0,
+            command=lambda: self.goAhead(self.entryName.get()),
+            relief="flat"
+        )
         
-        self.go.place(relx = 0.4,
-                    rely = 0.55)
+        self.go.place(
+            x=131.0,
+            y=381.0,
+            width=179.0,
+            height=38.0
+        )
+
+        self.login.resizable(False, False)
         self.Window.mainloop()
         # self.msg = self.x.public
         self.sendMessage()
@@ -160,6 +205,8 @@ class GUI:
                             relheight = 0.06,
                             relwidth = 0.22)
         
+        # self.Window.bind('<Return>',lambda : self.sendButton)
+
         self.textCons.config(cursor = "arrow")
         
         # create a scroll bar

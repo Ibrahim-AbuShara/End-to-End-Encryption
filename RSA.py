@@ -93,8 +93,8 @@ class Rsa:
         cipher = [pow(ord(char), key , n) for char in plaintext]
         # Return the array of bytes
         return cipher
-    # 15afff?
-    # [49, 53, 97, 102, 102, 102, 63]
+    
+    
     def decrypt(self, ciphertext):
         # Unpack the key into its components
         key, n = self.private
