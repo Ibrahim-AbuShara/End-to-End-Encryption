@@ -240,14 +240,14 @@ class GUI:
     # function to receive messages
     def receive(self):
         while True:
-            try:
-                message = client.recv(1024).decode(FORMAT)
+            # try:
+                message = client.recv(10240).decode(FORMAT)
                 # if the messages from the server is NAME send the client's name
                 if message == 'INFO':
                     info=self.name+'+'+str(self.x.public)
                     client.send(info.encode(FORMAT))
-                    self.p_key=client.recv(1024).decode(FORMAT)
-                    self.convert_str_tup()                  
+                    self.p_key=client.recv(10240).decode(FORMAT)
+                    self.convert_str_tup()                 
                 
                 else:
                     # insert messages to text box
@@ -258,11 +258,11 @@ class GUI:
                     
                     self.textCons.config(state = DISABLED)
                     self.textCons.see(END)
-            except:
-                # an error will be printed on the command line or console if there's an error
-                print("An error occured!")
-                client.close()
-                break
+            # except:
+            #     # an error will be printed on the command line or console if there's an error
+            #     print("An error occured!")
+            #     client.close()
+            #     break
         
     # function to send messages
     def sendMessage(self):

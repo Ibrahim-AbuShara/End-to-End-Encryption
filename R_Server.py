@@ -94,7 +94,7 @@ def handle(conn, addr):
 	
 	while connected:
 		# receive message
-		message = conn.recv(1024)
+		message = conn.recv(10240)
 		msg=message.decode(FORMAT).replace(': ',',')
 		with open('data.csv','a') as f: 
 				f.write(msg)
